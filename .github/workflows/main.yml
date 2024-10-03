@@ -40,7 +40,6 @@ jobs:
       shell: bash
 
     - name: Upload compile.log
-      if: steps.check_log.outputs.log_exists == 'true'
       uses: actions/upload-artifact@v3
       with:
         name: compile-log
