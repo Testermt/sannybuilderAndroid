@@ -13,11 +13,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up environment
+    - name: Set up environment and compile
       run: |
-        # Assuming sanny.exe is in the repository and located in a folder like 'tools'
-        # Update the path if necessary to the correct location of sanny.exe in your repository
-        $env:GITHUB_WORKSPACE\sanny.exe --compile "$env:GITHUB_WORKSPACE\my.txt" "$env:GITHUB_WORKSPACE\my2.scm"
+        # Run sanny.exe from the root of the repository to compile my.txt
+        & "$env:GITHUB_WORKSPACE\sanny.exe" --compile "$env:GITHUB_WORKSPACE\my.txt" "$env:GITHUB_WORKSPACE\my2.scm"
 
     - name: Upload compiled file
       uses: actions/upload-artifact@v3
