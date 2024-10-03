@@ -13,13 +13,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Run Sanny Compiler
+    - name: Set up environment and compile
       run: |
-        # Run sanny.exe with the correct paths using PowerShell syntax
+        # Run sanny.exe from the root of the repository to compile my.txt
         & "$env:GITHUB_WORKSPACE\sanny.exe" --compile "$env:GITHUB_WORKSPACE\my.txt" "$env:GITHUB_WORKSPACE\my2.scm"
-      
-    - name: Upload compile.log
+
+    - name: Upload compiled file
       uses: actions/upload-artifact@v3
       with:
-        name: my2.scm
-        path: $GITHUB_WORKSPACE\my2.scm
+        name: compiled-output
+        path: my2.scm
