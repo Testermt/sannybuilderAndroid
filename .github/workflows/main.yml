@@ -13,15 +13,24 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up environment
+    - name: Run Sanny Compiler
       run: |
         # Run sanny.exe with the correct paths using PowerShell syntax
         & "$env:GITHUB_WORKSPACE\sanny.exe" --compile "$env:GITHUB_WORKSPACE\my.txt" "$env:GITHUB_WORKSPACE\my2.scm"
       
     - name: Upload compiled files
+      if: steps.run_sanny.outputs.my2_scm_exists == 'true'
       uses: actions/upload-artifact@v3
       with:
         name: compiled-output
-        path: |
-          $GITHUB_WORKSPACE\my2.scm
-          $GITHUB_WORKSPACE\compile.log  # This will upload the compile.log file as well
+        path: $GITHUB_WORKSPACE\my2.scm
+
+    - name: Check for my2.scm and upload compile.log if not found
+      if: steps.run_sanny.outputs.my2_scm_exists != 'true'
+      run: |
+        echo "my2.scm not found. Uploading compile.log."
+        echo "Compile Log Path: $GITHUB_WORKSPACE\compile.log"
+        # Upload compile.log
+        tar -czf $GITHUB_WORKSPACE/compile.tar.gz -C $GITHUB_WORKSPACE compile.log
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
