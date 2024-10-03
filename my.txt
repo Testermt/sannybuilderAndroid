@@ -1,4 +1,4 @@
-// This file was decompiled using SASCM.ini published by GTAG (http://gtag.gtagaming.com/opcode-database) on 6.14.2013
+h// This file was decompiled using SASCM.ini published by GTAG (http://gtag.gtagaming.com/opcode-database) on 6.14.2013
 {$CLEO .csi}
 
 //-------------MAIN---------------
@@ -921,3 +921,173 @@ jf @GGUN_6947
 0073: 6@ /= 10@ // (float) 
 
 :GGUN_6947
+4@ *= 0.1 
+5@ *= 0.1 
+6@ *= 0.1 
+6@ += 0.025 
+07D5: set_car 11@ velocity_in_direction_XYZ 4@ 5@ 6@ rotation_velocitiesXY 0.0 0.0 unk 0.0 
+
+:GGUN_7016
+return 
+
+:GGUN_7018
+if 
+056D:   actor 13@ defined 
+jf @GGUN_7041 
+13@ = -1 
+
+:GGUN_7041
+if 
+056E:   car 11@ defined 
+jf @GGUN_7064 
+11@ = -1 
+
+:GGUN_7064
+if 
+03CA:   object 14@ exists 
+jf @GGUN_7087 
+14@ = -1 
+
+:GGUN_7087
+return 
+
+:GGUN_7089
+if 
+   not TIMERA > 15000 
+jf @GGUN_7283 
+0093: 21@ = integer TIMERA to_float 
+21@ /= 5.0 
+if 
+  21@ > 25.0 
+jf @GGUN_7165 
+21@ = 25.0 
+TIMERA = 15000 
+
+:GGUN_7165
+21@ += -25.0 
+069A: attach_object 18@ to_object 16@ with_offset 0.5 0.025 0.2 rotation 0.0 21@ 0.0 
+069A: attach_object 19@ to_object 16@ with_offset 0.5 -0.025 0.125 rotation 120.0 21@ 0.0 
+069A: attach_object 20@ to_object 16@ with_offset 0.5 0.025 0.125 rotation 240.0 21@ 0.0 
+
+:GGUN_7283
+7@ = 16 
+8@ = 64 
+9@ = 32 
+GGUN_7549() 
+return 
+
+:GGUN_7313
+if 
+   not TIMERA > 15000 
+jf @GGUN_7517 
+0093: 21@ = integer TIMERA to_float 
+21@ /= -5.0 
+21@ += 25.0 
+if 
+  0.0 > 21@ 
+jf @GGUN_7399 
+21@ = 0.0 
+TIMERA = 15000 
+
+:GGUN_7399
+21@ += -25.0 
+069A: attach_object 18@ to_object 16@ with_offset 0.5 0.025 0.2 rotation 0.0 21@ 0.0 
+069A: attach_object 19@ to_object 16@ with_offset 0.5 -0.025 0.125 rotation 120.0 21@ 0.0 
+069A: attach_object 20@ to_object 16@ with_offset 0.5 0.025 0.125 rotation 240.0 21@ 0.0 
+
+:GGUN_7517
+7@ = 64 
+8@ = 255 
+9@ = 128 
+GGUN_7549() 
+return 
+
+:GGUN_7549
+0400: store_coords_to 4@ 5@ 6@ from_object 16@ with_offset 0.7 0.0 0.15 
+04D5: create_corona_at 4@ 5@ 6@ radius 0.375 type 0 flare 0 RGB 7@ 8@ 9@ 
+0400: store_coords_to 4@ 5@ 6@ from_object 18@ with_offset 0.25 0.0 0.15 
+04D5: create_corona_at 4@ 5@ 6@ radius 0.075 type 0 flare 0 RGB 7@ 8@ 9@ 
+0400: store_coords_to 4@ 5@ 6@ from_object 19@ with_offset 0.25 0.0 0.15 
+04D5: create_corona_at 4@ 5@ 6@ radius 0.075 type 0 flare 0 RGB 7@ 8@ 9@ 
+0400: store_coords_to 4@ 5@ 6@ from_object 20@ with_offset 0.25 0.0 0.15 
+04D5: create_corona_at 4@ 5@ 6@ radius 0.075 type 0 flare 0 RGB 7@ 8@ 9@ 
+return 
+
+:GGUN_7783
+if 
+0185:   car 11@ health >= 975 
+jf @GGUN_7824 
+04FE: deflate_tire 0 on_car 11@ 
+0699: set_car 11@ repair_tire 0 
+Car.Health(11@) = 950
+
+:GGUN_7824
+return 
+
+:GGUN_7826
+12@ = Car.Model(11@)
+07E4: get_model 12@ dimensions_cornerA_to 4@ 5@ 6@ dimensions_cornerB_to 7@ 8@ 9@ 
+050A: 12@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 7@ 8@ 9@ 
+12@ /= 2.0 
+12@ += 4.0 
+return 
+
+:GGUN_7902
+12@ = Object.Model(14@)
+07E4: get_model 12@ dimensions_cornerA_to 4@ 5@ 6@ dimensions_cornerB_to 7@ 8@ 9@ 
+050A: 12@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 7@ 8@ 9@ 
+12@ /= 2.0 
+12@ += 4.0 
+return 
+
+:GGUN_7978
+0509: 27@ = distance_between_XY 28@ 29@ and_XY 0.0 0.0 
+0073: 28@ /= 27@ // (float) 
+0073: 29@ /= 27@ // (float) 
+0509: 27@ = distance_between_XY 28@ 29@ and_XY 0.0 1.0 
+15@ = 0 
+
+:GGUN_8043
+27@ /= 2.0 
+006B: 27@ *= 27@ // (float) 
+0087: 29@ = 27@ // (float) 
+27@ *= -1.0 
+27@ += 1.0 
+01FB: 27@ = square_root 27@ 
+27@ *= -1.0 
+27@ += 1.0 
+006B: 27@ *= 27@ // (float) 
+005B: 27@ += 29@ // (float) 
+01FB: 27@ = square_root 27@ 
+15@ += 1 
+  15@ > 11 
+jf @GGUN_8043 
+27@ *= 4096.0 
+27@ *= 180.0 
+27@ /= 3.141529 
+if 
+  28@ > 0.0 
+jf @GGUN_8233 
+27@ *= -1.0 
+27@ += 360.0 
+
+:GGUN_8233
+return 
+
+:VehiclePool
+hex
+"_ZN6CPools15ms_pVehiclePoolE" 00
+end
+
+:7PEDPool7
+hex
+"_ZN6CPools11ms_pPedPoolE" 00
+end
+
+:Object7
+hex
+"_ZN6CPools14ms_pObjectPoolE" 00
+end
+:7
+end_thread
+
