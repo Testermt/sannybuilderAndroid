@@ -1,0 +1,6 @@
+17:22:27 [INFO] core library loaded
+17:22:28 [INFO] Performing cleanup on current directory
+17:22:28 [INFO] Loading IDE file \data\maps\veh_mods\veh_mods.ide
+17:22:28 [WARN] File \data\maps\veh_mods\veh_mods.ide not found
+17:22:28 [INFO] Loading IDE file \data\default.dat
+17:22:28 [WARN] File \data\default.dat not found
