@@ -1,44 +1,923 @@
-DEFINE MISSIONS 0
-//DEFINE MISSION {ID} 0 AT {LABEL} @
-DEFINE EXTERNAL_SCRIPTS 0 // Use -1 in order not to compile AAA script
-//DEFINE SCRIPT {NAME}  AT {LABEL} @
-DEFINE UNKNOWN_EMPTY_SEGMENT 0
-DEFINE UNKNOWN_THREADS_MEMORY 0
- 
-{$VERSION 3.0.0000}
-var
- $PLAYER_CHAR: Player
-end // var 
-03A4/: name_thread 'MAIN'
-01F0: set_max_wanted_level_to 6 
-0111: toggle_wasted_busted_check 0 
-00C0: set_current_time_hours_to 8 minutes_to 0 
-04E4: unknown_refresh_game_renderer_at 2488.56 -1666.84 
-03CB: set_rendering_origin_at 2488.56 -1666.84 13.38 
-0053: $PLAYER_CHAR = create_player #NULL at 2488.56 -1666.84 13.38 
-01F5: $PLAYER_ACTOR = create_player_actor $PLAYER_CHAR
-07AF: $PLAYER_GROUP = player $PLAYER_CHAR group 
-0373: set_camera_directly_behind_player 
-01B6: set_weather 0 
-0001: wait 0 ms 
-087B: set_player $PLAYER_CHAR clothes_texture "PLAYER_FACE" model "HEAD" body_part 1 
-087B: set_player $PLAYER_CHAR clothes_texture "JEANSDENIM" model "JEANS" body_part 2 
-087B: set_player $PLAYER_CHAR clothes_texture "SNEAKERBINCBLK" model "SNEAKER" body_part 3 
-087B: set_player $PLAYER_CHAR clothes_texture "VEST" model "VEST" body_part 0 
-070D: rebuild_player $PLAYER_CHAR
-01B4: toggle_player $PLAYER_CHAR can_move 1 
-016A: fade 1 time 0 
-04BB: select_interior 0 
-0629: change_integer_stat 181 to 4 
-016C: restart_if_wasted_at 2027.77 -1420.52 15.99 angle 137.0 town_number 0 
-016D: restart_if_busted_at 1550.68 -1675.49 14.51 angle 90.0 town_number 0 
-0180: set_on_mission_flag_to $ONMISSION
-0004: $DEFAULT_WAIT_TIME = 250
-03E6: remove_text_box 
- 
-// put your create_thread commands here
- 
-:MAIN_LOOP
-0001: wait $DEFAULT_WAIT_TIME ms
-00BF: $TIME_HOURS = current_time_hours, $TIME_MINS = current_time_minutes
-0002: jump @MAIN_LOOP
+// This file was decompiled using SASCM.ini published by GTAG (http://gtag.gtagaming.com/opcode-database) on 6.14.2013
+{$CLEO .csi}
+
+//-------------MAIN---------------
+thread 'GGUN' 
+
+:GGUN_11
+wait 0 
+if
+0A51:   is_widget_pressed 29
+jf @GGUN_11
+Model.Load(351)
+Model.Load(1582)
+Model.Load(348)
+Model.Load(2976)
+Model.Load(2956)
+038B: load_requested_models 
+
+:GGUN_91
+wait 0 
+if and
+   Model.Available(351)
+   Model.Available(1582)
+   Model.Available(348)
+   Model.Available(2976)
+   Model.Available(2956)
+jf @GGUN_91 
+//26@ = 13150916 // 2
+
+//:GGUN_141
+//0DD8: 0@ = read_mem_addr 26@ size 4 add_ib 1
+//if 
+   //not 0@ == 351 
+//jf @GGUN_179 
+//jump @GGUN_310 
+
+//:GGUN_179
+//26@ += 36 
+//0DD8: 0@ = read_mem_addr 26@ size 4 add_ib 1
+//26@ += -36 
+//if 
+  // not 0@ == 2 
+//jf @GGUN_230 
+//jump @GGUN_310 
+
+//:GGUN_230
+//26@ += -8 
+//0DD8: 24@ = read_mem_addr 26@ size 4 add_ib 1
+//0DD9: write_mem_addr 26@ value 0.0 size 4 add_ib 1 protect 0
+//26@ += 56 
+//0DD8: 25@ = read_mem_addr 26@ size 4 add_ib 1
+//0DD9: write_mem_addr 26@ value 2.4 size 4 add_ib 1 protect 0
+//26@ += -48 
+//jump @GGUN_334 
+
+//:GGUN_310
+//26@ += 112 
+//  26@ > 13159876 // 2
+//jf @GGUN_141 
+
+:GGUN_334
+04B8: get_weapon_data_from_actor $PLAYER_ACTOR slot 4 weapon 0@ ammo 1@ model 2@ 
+082A: set_player $PLAYER_CHAR able_to_use_crouch_button 0 
+0881: set_player $PLAYER_CHAR able_to_shoot_weapons 0 
+Actor.GiveWeaponAndAmmo($PLAYER_ACTOR, CombatShotgun, 999999)
+01B9: set_actor $PLAYER_ACTOR armed_weapon_to 27 
+0653: 26@ = float_stat 74 
+062A: change_float_stat 74 to 1000.0 
+3@ = -1 
+11@ = -1 
+13@ = -1 
+TIMERA = 0 
+04C4: store_coords_to 7@ 8@ 9@ from_actor $PLAYER_ACTOR with_offset 0.0 0.0 0.0 
+16@ = Object.Create(348, 4@, 5@, 6@)
+Object.CollisionDetection(16@) = False
+070A: AS_actor $PLAYER_ACTOR attach_to_object 16@ offset 0.0 0.0 0.0 on_bone 6 16 perform_animation "NULL" IFP_file "NULL" time 1 
+17@ = Object.Create(2976, 4@, 5@, 6@)
+Object.CollisionDetection(17@) = False
+08D2: object 17@ scale_model 0.75 
+069A: attach_object 17@ to_object 16@ with_offset 0.1 0.025 0.1 rotation 0.0 82.5 0.0 
+18@ = Object.Create(2956, 4@, 5@, 6@)
+Object.CollisionDetection(18@) = False
+08D2: object 18@ scale_model 0.025 
+069A: attach_object 18@ to_object 16@ with_offset 0.5 0.025 0.2 rotation 0.0 15.0 0.0 
+19@ = Object.Create(2956, 4@, 5@, 6@)
+Object.CollisionDetection(19@) = False
+08D2: object 19@ scale_model 0.025 
+069A: attach_object 19@ to_object 16@ with_offset 0.5 -0.025 0.125 rotation 120.0 15.0 0.0 
+20@ = Object.Create(2956, 4@, 5@, 6@)
+Object.CollisionDetection(20@) = False
+08D2: object 20@ scale_model 0.025 
+069A: attach_object 20@ to_object 16@ with_offset 0.5 0.025 0.125 rotation 240.0 15.0 0.0 
+
+:GGUN_809
+wait 0 
+if and
+02D8:   actor $PLAYER_ACTOR current_weapon == 27 
+   not Actor.Driving($PLAYER_ACTOR)
+jf @GGUN_3584 
+GGUN_7089() 
+if 
+   Actor.Animation($PLAYER_ACTOR) == "Gun_stand"
+jf @GGUN_2201 
+if 
+0A51:   is_widget_pressed 27
+jf @GGUN_1944 
+GGUN_7018() //defined
+GGUN_3940() // target Pointer 
+15@ = 25.0 
+GGUN_4658() 
+if or
+056E:   car 11@ defined 
+056D:   actor 13@ defined 
+03CA:   object 14@ exists 
+jf @GGUN_1080 
+0400: store_coords_to 4@ 5@ 6@ from_object 3@ with_offset 0.0 0.0 1.0 
+0400: store_coords_to 7@ 8@ 9@ from_object 3@ with_offset 0.0 0.0 0.0 
+0063: 4@ -= 7@ // (float) 
+0063: 5@ -= 8@ // (float) 
+0063: 6@ -= 9@ // (float) 
+0087: 27@ = 4@ // (float) 
+0087: 28@ = 5@ // (float) 
+0087: 29@ = 6@ // (float) 
+27@ *= 2.5 
+28@ *= 2.5 
+29@ *= 2.5 
+
+:GGUN_1080
+if 
+056E:   car 11@ defined 
+jf @GGUN_1190 
+GGUN_7783() 
+Car.LockInCurrentPosition(11@) = True
+Car.LockInCurrentPosition(11@) = False
+4@ *= 0.375 
+5@ *= 0.375 
+6@ *= 0.375 
+07D5: set_car 11@ velocity_in_direction_XYZ 4@ 5@ 6@ rotation_velocitiesXY 0.0 0.0 unk 0.0 
+Car.StorePos(11@, 7@, 8@, 9@)
+
+:GGUN_1190
+if 
+056D:   actor 13@ defined 
+jf @GGUN_1662 
+Actor.StorePos(13@, 7@, 8@, 9@)
+02CE: 10@ = ground_z_at 7@ 8@ 9@ 
+10@ += 1.5 
+0063: 9@ -= 10@ // (float) 
+if 
+  0.0 > 9@ 
+jf @GGUN_1336 
+0087: 9@ = 10@ // (float) 
+10@ += -1.0 
+08C7: put_actor 13@ at 7@ 8@ 10@ dont_warp_gang 
+if 
+  0.2 > 6@ 
+jf @GGUN_1336 
+6@ = 0.2 
+
+:GGUN_1336
+4@ *= 12.5 
+5@ *= 12.5 
+6@ *= 12.5 
+083C: set_actor 13@ velocity_in_direction_XYZ 4@ 5@ 6@ 
+4@ = Actor.Angle($PLAYER_ACTOR)
+5@ = Actor.Angle(13@)
+0063: 4@ -= 5@ // (float) 
+0656: get_angle 4@ absolute_degrees_to 4@ 
+if or
+  4@ > 315.0 
+  45.0 > 4@ 
+jf @GGUN_1474 
+0829: actor 13@ perform_animation "KO_skid_back" IFP_file "PED" 4.0 time -1 and_dies 
+
+:GGUN_1474
+if and
+  4@ > 135.0 
+  225.0 > 4@ 
+jf @GGUN_1537 
+0829: actor 13@ perform_animation "KO_skid_front" IFP_file "PED" 4.0 time -1 and_dies 
+
+:GGUN_1537
+if and
+  4@ > 45.0 
+  135.0 > 4@ 
+jf @GGUN_1596 
+0829: actor 13@ perform_animation "KO_spin_R" IFP_file "PED" 4.0 time -1 and_dies 
+
+:GGUN_1596
+if and
+  4@ > 225.0 
+  315.0 > 4@ 
+jf @GGUN_1655 
+0829: actor 13@ perform_animation "KO_spin_L" IFP_file "PED" 4.0 time -1 and_dies 
+
+:GGUN_1655
+Actor.Health(13@) = 0
+
+:GGUN_1662
+if 
+03CA:   object 14@ exists 
+jf @GGUN_1772 
+Object.CollisionDetection(14@) = True
+Object.ToggleInMovingList(14@) = True
+0682: detach_object 14@ 0.0 0.0 0.0 collision_detection 1 
+4@ *= 12.5 
+5@ *= 12.5 
+6@ *= 12.5 
+Object.Throw(14@, 4@, 5@, 6@)
+Object.StorePos(14@, 7@, 8@, 9@)
+
+:GGUN_1772
+if or
+056E:   car 11@ defined 
+056D:   actor 13@ defined 
+03CA:   object 14@ exists 
+jf @GGUN_1944 
+0400: store_coords_to 4@ 5@ 6@ from_object 16@ with_offset 0.75 0.0 0.15 
+15@ = 0 
+
+:GGUN_1834
+06BC: create_M4_shoot_from 4@ 5@ 6@ target 7@ 8@ 9@ energy 0 
+15@ += 1 
+  15@ > 3 
+jf @GGUN_1834 
+27@ *= -1.5 
+28@ *= -1.5 
+29@ *= -1.5 
+08EB: create_sparks_at 7@ 8@ 9@ velocity_direction 27@ 28@ 29@ density 150 
+GGUN_7018() 
+jump @GGUN_3461 
+
+:GGUN_1944
+if or
+0A51:   is_widget_pressed 14 
+0A51:   is_widget_pressed 14
+jf @GGUN_2194 
+GGUN_7018() 
+GGUN_3940() 
+15@ = 250.0 
+GGUN_4658() 
+if 
+056E:   car 11@ defined 
+jf @GGUN_2055 
+GGUN_7783() 
+GGUN_7826() 
+018C: play_sound 1058 at 0.0 0.0 0.0 
+jump @GGUN_2236 
+
+:GGUN_2055
+if 
+056D:   actor 13@ defined 
+jf @GGUN_2108 
+12@ = 4.7 
+018C: play_sound 1058 at 0.0 0.0 0.0 
+jump @GGUN_2236 
+
+:GGUN_2108
+if 
+03CA:   object 14@ exists 
+jf @GGUN_2194 
+Object.CollisionDetection(14@) = True
+Object.ToggleInMovingList(14@) = True
+0682: detach_object 14@ 0.0 0.0 0.0 collision_detection 1 
+GGUN_7902() 
+018C: play_sound 1058 at 0.0 0.0 0.0 
+jump @GGUN_2236 
+
+:GGUN_2194
+jump @GGUN_2229 
+
+:GGUN_2201
+if 
+03CA:   object 3@ exists 
+jf @GGUN_2229 
+Object.Destroy(3@)
+3@ = -1 
+
+:GGUN_2229
+jump @GGUN_809 
+
+:GGUN_2236
+wait 0 
+GGUN_7313() 
+if 
+   Actor.Animation($PLAYER_ACTOR) == "Gun_stand"
+jf @GGUN_2345 
+if or
+0A51:   is_widget_pressed 14 
+0A51:   is_widget_pressed 27
+0A51:   is_widget_pressed 14
+jf @GGUN_2324 
+GGUN_3940() 
+GGUN_5740() 
+jump @GGUN_2338 
+
+:GGUN_2324
+TIMERA = 0 
+jump @GGUN_2394 
+
+:GGUN_2338
+jump @GGUN_2387 
+
+:GGUN_2345
+GGUN_7018() 
+if 
+03CA:   object 3@ exists 
+jf @GGUN_2380 
+Object.Destroy(3@)
+3@ = -1 
+
+:GGUN_2380
+jump @GGUN_809 
+
+:GGUN_2387
+jump @GGUN_2236 
+
+:GGUN_2394
+wait 0 
+GGUN_7313() 
+if 
+   Actor.Animation($PLAYER_ACTOR) == "Gun_stand"
+jf @GGUN_3405 
+if or
+0A51:   is_widget_pressed 14 
+0A51:   is_widget_pressed 27
+0A51:   is_widget_pressed 14
+jf @GGUN_3384 
+GGUN_3940() 
+if 
+0A51:   is_widget_pressed 27
+jf @GGUN_3336 
+0400: store_coords_to 4@ 5@ 6@ from_object 3@ with_offset 0.0 0.0 5.0 
+0400: store_coords_to 7@ 8@ 9@ from_object 3@ with_offset 0.0 0.0 0.0 
+0063: 4@ -= 7@ // (float) 
+0063: 5@ -= 8@ // (float) 
+0063: 6@ -= 9@ // (float) 
+0087: 27@ = 4@ // (float) 
+0087: 28@ = 5@ // (float) 
+0087: 29@ = 6@ // (float) 
+27@ *= 2.5 
+28@ *= 2.5 
+29@ *= 2.5 
+if 
+056D:   actor 13@ defined 
+jf @GGUN_2977 
+4@ *= 25.0 
+5@ *= 25.0 
+6@ *= 25.0 
+083C: set_actor 13@ velocity_in_direction_XYZ 4@ 5@ 6@ 
+Actor.StorePos(13@, 7@, 8@, 9@)
+4@ = Actor.Angle($PLAYER_ACTOR)
+5@ = Actor.Angle(13@)
+0063: 4@ -= 5@ // (float) 
+0656: get_angle 4@ absolute_degrees_to 4@ 
+if or
+  4@ > 315.0 
+  45.0 > 4@ 
+jf @GGUN_2789 
+0829: actor 13@ perform_animation "KO_skid_back" IFP_file "PED" 4.0 time -1 and_dies 
+
+:GGUN_2789
+if and
+  4@ > 135.0 
+  225.0 > 4@ 
+jf @GGUN_2852 
+0829: actor 13@ perform_animation "KO_skid_front" IFP_file "PED" 4.0 time -1 and_dies 
+
+:GGUN_2852
+if and
+  4@ > 45.0 
+  135.0 > 4@ 
+jf @GGUN_2911 
+0829: actor 13@ perform_animation "KO_spin_R" IFP_file "PED" 4.0 time -1 and_dies 
+
+:GGUN_2911
+if and
+  4@ > 225.0 
+  315.0 > 4@ 
+jf @GGUN_2970 
+0829: actor 13@ perform_animation "KO_spin_L" IFP_file "PED" 4.0 time -1 and_dies 
+
+:GGUN_2970
+Actor.Health(13@) = 0
+
+:GGUN_2977
+if 
+056E:   car 11@ defined 
+jf @GGUN_3080 
+Car.LockInCurrentPosition(11@) = True
+Car.LockInCurrentPosition(11@) = False
+4@ *= 0.75 
+5@ *= 0.75 
+6@ *= 0.75 
+07D5: set_car 11@ velocity_in_direction_XYZ 4@ 5@ 6@ rotation_velocitiesXY 0.0 0.0 unk 0.0 
+Car.StorePos(11@, 7@, 8@, 9@)
+
+:GGUN_3080
+if 
+03CA:   object 14@ exists 
+jf @GGUN_3154 
+4@ *= 25.0 
+5@ *= 25.0 
+6@ *= 25.0 
+Object.Throw(14@, 4@, 5@, 6@)
+Object.StorePos(14@, 7@, 8@, 9@)
+
+:GGUN_3154
+0400: store_coords_to 4@ 5@ 6@ from_object 16@ with_offset 0.75 0.0 0.15 
+15@ = 0 
+
+:GGUN_3190
+06BC: create_M4_shoot_from 4@ 5@ 6@ target 7@ 8@ 9@ energy 0 
+15@ += 1 
+  15@ > 3 
+jf @GGUN_3190 
+27@ *= -0.75 
+28@ *= -0.75 
+29@ *= -0.75 
+08EB: create_sparks_at 7@ 8@ 9@ velocity_direction 27@ 28@ 29@ density 150 
+08EB: create_sparks_at 7@ 8@ 9@ velocity_direction 27@ 28@ 29@ density 150 
+018C: play_sound 1052 at 0.0 0.0 0.0 
+jump @GGUN_3356 
+
+:GGUN_3336
+018C: play_sound 1053 at 0.0 0.0 0.0 
+
+:GGUN_3356
+GGUN_7018() 
+TIMERA = 0 
+jump @GGUN_3461 
+jump @GGUN_3398 
+
+:GGUN_3384
+GGUN_3940() 
+GGUN_5740() 
+
+:GGUN_3398
+jump @GGUN_3454 
+
+:GGUN_3405
+GGUN_7018() 
+if 
+03CA:   object 3@ exists 
+jf @GGUN_3440 
+Object.Destroy(3@)
+3@ = -1 
+
+:GGUN_3440
+TIMERA = 0 
+jump @GGUN_809 
+
+:GGUN_3454
+jump @GGUN_2394 
+
+:GGUN_3461
+wait 0 
+GGUN_7089() 
+if 
+   Actor.Animation($PLAYER_ACTOR) == "Gun_stand"
+jf @GGUN_3542 
+if and
+8A51:   not is_widget_pressed 14 
+8A51:   not is_widget_pressed 27
+8A51:   not is_widget_pressed 14
+jf @GGUN_3535 
+jump @GGUN_809 
+
+:GGUN_3535
+jump @GGUN_3577 
+
+:GGUN_3542
+if 
+03CA:   object 3@ exists 
+jf @GGUN_3570 
+Object.Destroy(3@)
+3@ = -1 
+
+:GGUN_3570
+jump @GGUN_809 
+
+:GGUN_3577
+jump @GGUN_3461 
+
+:GGUN_3584
+GGUN_7018() 
+if 
+03CA:   object 3@ exists 
+jf @GGUN_3619 
+Object.Destroy(3@)
+3@ = -1 
+
+:GGUN_3619
+Object.Destroy(16@)
+Object.Destroy(17@)
+Object.Destroy(18@)
+Object.Destroy(19@)
+Object.Destroy(20@)
+Model.Destroy(351)
+Model.Destroy(1582)
+Model.Destroy(348)
+Model.Destroy(2976)
+Model.Destroy(2956)
+Model.Load(2@)
+038B: load_requested_models 
+
+:GGUN_3676
+wait 0 
+if 
+   Model.Available(2@)
+jf @GGUN_3676 
+082A: set_player $PLAYER_CHAR able_to_use_crouch_button 1 
+0881: set_player $PLAYER_CHAR able_to_shoot_weapons 1 
+0555: remove_weapon 27 from_actor $PLAYER_ACTOR 
+062A: change_float_stat 74 to 26@ 
+0470: 26@ = actor $PLAYER_ACTOR current_weapon 
+Actor.GiveWeaponAndAmmo($PLAYER_ACTOR, 0@, 1@)
+01B9: set_actor $PLAYER_ACTOR armed_weapon_to 26@ 
+Model.Destroy(2@)
+//26@ = 13150916 // 2
+
+//:GGUN_3766
+//0DD8: 0@ = read_mem_addr 26@ size 4 add_ib 1
+//if 
+ //  not 0@ == 351 
+//jf @GGUN_3804 
+//jump @GGUN_3907 
+
+//:GGUN_3804
+//26@ += 36 
+//0DD8: 0@ = read_mem_addr 26@ size 4 add_ib 1
+//26@ += -36 
+//if 
+  // not 0@ == 2 
+//jf @GGUN_3855 
+//jump @GGUN_3907 
+
+//:GGUN_3855
+//26@ += -8 
+//0DD9: write_mem_addr 26@ value 24@ size 4 add_ib 1 protect 0
+//26@ += 56 
+//0DD9: write_mem_addr 26@ value 25@ size 4 add_ib 1 protect 0
+//26@ += -48 
+//jump @GGUN_3931 
+
+//:GGUN_3907
+//26@ += 112 
+//  26@ > 13159876 // 2
+//jf @GGUN_3766 
+
+:GGUN_3931
+jump @GGUN_11 
+end_thread 
+
+:GGUN_3940
+068D: get_camera_position_to 7@ 8@ 9@ 
+068E: get_camera_target_point_to 4@ 5@ 6@ 
+0063: 4@ -= 7@ // (float) 
+0063: 5@ -= 8@ // (float) 
+0063: 6@ -= 9@ // (float) 
+0509: 5@ = distance_between_XY 4@ 5@ and_XY 0.0 0.0 
+0087: 28@ = 5@ // (float) 
+0087: 29@ = 6@ // (float) 
+GGUN_7978() 
+0087: 4@ = 27@ // (float) 
+0801: get_camera_zoom_factor_to 29@ // float 
+0801: get_camera_zoom_factor_to 6@ // float 
+6@ /= 35.0 
+6@ *= -1.2 
+6@ += 16.4 
+0073: 29@ /= 6@ // (float) 
+0087: 6@ = 29@ // (float) 
+04C4: store_coords_to 27@ 28@ 29@ from_actor $PLAYER_ACTOR with_offset 0.0 0.0 0.8 
+050A: 5@ = distance_between_XYZ 7@ 8@ 9@ and_XYZ 27@ 28@ 29@ 
+0087: 29@ = 6@ // (float) 
+if 
+  5@ > 0.5 
+jf @GGUN_4240 
+//0DD8: 6@ = read_mem_addr 12840868 size 4 add_ib 1
+29@ *= 1.6 
+0073: 29@ /= 6@ // (float) 
+005B: 4@ += 29@ // (float) 
+006B: 29@ *= 6@ // (float) 
+29@ /= 1.6 
+jump @GGUN_4250 
+
+:GGUN_4240
+29@ = 0.0 
+
+:GGUN_4250
+02F7: 5@ = cosine 4@ // (float) 
+02F6: 6@ = sine 4@ // (float) 
+6@ *= -1.0 
+29@ /= 200.0 
+0656: get_angle 4@ absolute_degrees_to 4@ 
+4@ += -270.0 
+0097: make 4@ absolute_float 
+4@ /= 90.0 
+006B: 4@ *= 4@ // (float) 
+006B: 4@ *= 29@ // (float) 
+04C4: store_coords_to 4@ 5@ 6@ from_actor $PLAYER_ACTOR with_offset 4@ 6@ 5@ 
+04C4: store_coords_to 7@ 8@ 9@ from_actor $PLAYER_ACTOR with_offset 0.0 0.0 0.0 
+0063: 4@ -= 7@ // (float) 
+0063: 5@ -= 8@ // (float) 
+0063: 6@ -= 9@ // (float) 
+050A: 29@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 0.0 0.0 0.0 
+0073: 4@ /= 29@ // (float) 
+0073: 5@ /= 29@ // (float) 
+0073: 6@ /= 29@ // (float) 
+if 
+83CA:   not object 3@ exists 
+jf @GGUN_4540 
+04C4: store_coords_to 7@ 8@ 9@ from_actor $PLAYER_ACTOR with_offset 0.2 0.0 0.5 
+3@ = Object.Create(1582, 7@, 8@, 9@)
+0750: set_object 3@ visibility 0 
+Object.CollisionDetection(3@) = False
+
+:GGUN_4540
+0087: 28@ = 4@ // (float) 
+0087: 29@ = 5@ // (float) 
+GGUN_7978() 
+0087: 29@ = 6@ // (float) 
+0087: 9@ = 27@ // (float) 
+0509: 28@ = distance_between_XY 4@ 5@ and_XY 0.0 0.0 
+GGUN_7978() 
+0087: 7@ = 27@ // (float) 
+0453: set_object 3@ XYZ_rotation 7@ 0.0 9@ 
+068D: get_camera_position_to 7@ 8@ 9@ 
+0815: put_object 3@ at 7@ 8@ 9@ and_keep_rotation 
+return 
+
+:GGUN_4658
+27@ = 0.0 
+0400: store_coords_to 7@ 8@ 9@ from_object 3@ with_offset 0.0 0.0 2.5 
+
+:GGUN_4697
+0025:   15@ > 27@ // (float) 
+jf @GGUN_5738 
+27@ += 10.0 
+0400: store_coords_to 4@ 5@ 6@ from_object 3@ with_offset 0.0 0.0 27@ 
+if 
+86BD:   not no_obstacles_between 7@ 8@ 9@ and 4@ 5@ 6@ solid 0 car 1 actor 1 object 1 particle 0 
+jf @GGUN_5731 
+0087: 28@ = 27@ // (float) 
+27@ += -10.0 
+
+:GGUN_4808
+0025:   28@ > 27@ // (float) 
+jf @GGUN_5731 
+27@ += 1.0 
+0400: store_coords_to 4@ 5@ 6@ from_object 3@ with_offset 0.0 0.0 27@ 
+if 
+86BD:   not no_obstacles_between 7@ 8@ 9@ and 4@ 5@ 6@ solid 0 car 1 actor 1 object 1 particle 0 
+jf @GGUN_5724 
+0087: 29@ = 27@ // (float) 
+27@ += -1.0 
+
+:GGUN_4919
+0025:   29@ > 27@ // (float) 
+jf @GGUN_5724 
+27@ += 0.1 
+0400: store_coords_to 4@ 5@ 6@ from_object 3@ with_offset 0.0 0.0 27@ 
+if 
+86BD:   not no_obstacles_between 7@ 8@ 9@ and 4@ 5@ 6@ solid 0 car 1 actor 0 object 0 particle 0 
+jf @GGUN_5212 
+30@ = 25.0 
+0DD0: 27@ = get_label_addr @VehiclePool
+0DD1: 27@ = get_func_addr_by_cstr_name 27@
+0DD8: 27@ = read_mem_addr 27@ size 4 add_ib 0 // Pointer to vehicle pool usage information, which contains:
+27@ += 4 
+0DD8: 27@ = read_mem_addr 27@ size 4 add_ib 0
+28@ = 0 
+
+:GGUN_5062
+0DD8: 29@ = read_mem_addr 27@ size 1 add_ib 0
+27@ += 1 
+if and
+  26@ >= 0 
+  128 > 29@ 
+jf @GGUN_5187 
+005A: 29@ += 28@ // (int) 
+Car.StorePos(29@, 7@, 8@, 9@)
+050A: 31@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 7@ 8@ 9@ 
+if 
+0025:   30@ > 31@ // (float) 
+jf @GGUN_5187 
+0087: 30@ = 31@ // (float) 
+0085: 11@ = 29@ // (int) 
+
+:GGUN_5187
+28@ += 256 
+  28@ > 27904 
+jf @GGUN_5062 
+return 
+
+:GGUN_5212
+if 
+86BD:   not no_obstacles_between 7@ 8@ 9@ and 4@ 5@ 6@ solid 0 car 0 actor 1 object 0 particle 0 
+jf @GGUN_5474 
+30@ = 25.0 
+0DD0: 27@ = get_label_addr @7PEDPool7
+0DD1: 27@ = get_func_addr_by_cstr_name 27@
+0DD8: 27@ = read_mem_addr 27@ size 4 add_ib 0 // Pointer to ped pool usage information, which contains:
+27@ += 4 
+0DD8: 27@ = read_mem_addr 27@ size 4 add_ib 0
+28@ = 0 
+
+:GGUN_5303
+0DD8: 29@ = read_mem_addr 27@ size 1 add_ib 0
+27@ += 1 
+if and
+  26@ >= 0 
+  128 > 29@ 
+jf @GGUN_5447 
+005A: 29@ += 28@ // (int) 
+if 
+803C:   not  $PLAYER_ACTOR == 29@ // (int) 
+jf @GGUN_5447 
+Actor.StorePos(29@, 7@, 8@, 9@)
+050A: 31@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 7@ 8@ 9@ 
+if 
+0025:   30@ > 31@ // (float) 
+jf @GGUN_5447 
+0087: 30@ = 31@ // (float) 
+0085: 13@ = 29@ // (int) 
+
+:GGUN_5447
+28@ += 256 
+  28@ > 35584 
+jf @GGUN_5303 
+return 
+
+:GGUN_5474
+if 
+86BD:   not no_obstacles_between 7@ 8@ 9@ and 4@ 5@ 6@ solid 0 car 0 actor 0 object 1 particle 0 
+jf @GGUN_5717 
+30@ = 25.0 
+0DD0: 27@ = get_label_addr @Object7
+0DD1: 27@ = get_func_addr_by_cstr_name 27@
+0DD8: 27@ = read_mem_addr 27@ size 4 add_ib 0 // Objects
+27@ += 4 
+0DD8: 27@ = read_mem_addr 27@ size 4 add_ib 0
+28@ = 0 
+
+:GGUN_5565
+0DD8: 29@ = read_mem_addr 27@ size 1 add_ib 0
+27@ += 1 
+if and
+  26@ >= 0 
+  128 > 29@ 
+jf @GGUN_5690 
+005A: 29@ += 28@ // (int) 
+Object.StorePos(29@, 7@, 8@, 9@)
+050A: 31@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 7@ 8@ 9@ 
+if 
+0025:   30@ > 31@ // (float) 
+jf @GGUN_5690 
+0087: 30@ = 31@ // (float) 
+0085: 14@ = 29@ // (int) 
+
+:GGUN_5690
+28@ += 256 
+  28@ > 89344 
+jf @GGUN_5565 
+return 
+
+:GGUN_5717
+jump @GGUN_4919 
+
+:GGUN_5724
+jump @GGUN_4808 
+
+:GGUN_5731
+jump @GGUN_4697 
+
+:GGUN_5738
+return 
+
+:GGUN_5740
+0400: store_coords_to 4@ 5@ 6@ from_object 3@ with_offset 0.0 0.0 12@ 
+if 
+056D:   actor 13@ defined 
+jf @GGUN_6060 
+Actor.StorePos(13@, 7@, 8@, 9@)
+0063: 4@ -= 7@ // (float) 
+0063: 5@ -= 8@ // (float) 
+0063: 6@ -= 9@ // (float) 
+050A: 10@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 0.0 0.0 0.0 
+10@ /= 5.0 
+if 
+  10@ > 1.0 
+jf @GGUN_5905 
+0073: 4@ /= 10@ // (float) 
+0073: 5@ /= 10@ // (float) 
+0073: 6@ /= 10@ // (float) 
+
+:GGUN_5905
+4@ *= 10.0 
+5@ *= 10.0 
+6@ *= 10.0 
+6@ += 1.0 
+Actor.StorePos(13@, 7@, 8@, 9@)
+02CE: 10@ = ground_z_at 7@ 8@ 9@ 
+10@ += 1.5 
+0063: 9@ -= 10@ // (float) 
+if 
+  0.0 > 9@ 
+jf @GGUN_6046 
+10@ += -1.0 
+08C7: put_actor 13@ at 7@ 8@ 10@ dont_warp_gang 
+6@ = 1.0 
+
+:GGUN_6046
+083C: set_actor 13@ velocity_in_direction_XYZ 4@ 5@ 6@ 
+
+:GGUN_6060
+if 
+056E:   car 11@ defined 
+jf @GGUN_6281 
+Car.LockInCurrentPosition(11@) = True
+Car.LockInCurrentPosition(11@) = False
+Car.StorePos(11@, 7@, 8@, 9@)
+0063: 4@ -= 7@ // (float) 
+0063: 5@ -= 8@ // (float) 
+0063: 6@ -= 9@ // (float) 
+050A: 10@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 0.0 0.0 0.0 
+10@ /= 25.0 
+if 
+  10@ > 1.0 
+jf @GGUN_6212 
+0073: 4@ /= 10@ // (float) 
+0073: 5@ /= 10@ // (float) 
+0073: 6@ /= 10@ // (float) 
+
+:GGUN_6212
+4@ *= 0.1 
+5@ *= 0.1 
+6@ *= 0.1 
+6@ += 0.05 
+07D5: set_car 11@ velocity_in_direction_XYZ 4@ 5@ 6@ rotation_velocitiesXY 0.0 0.0 unk 0.0 
+
+:GGUN_6281
+if 
+03CA:   object 14@ exists 
+jf @GGUN_6473 
+Object.StorePos(14@, 7@, 8@, 9@)
+0063: 4@ -= 7@ // (float) 
+0063: 5@ -= 8@ // (float) 
+0063: 6@ -= 9@ // (float) 
+050A: 10@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 0.0 0.0 0.0 
+10@ /= 5.0 
+if 
+  10@ > 1.0 
+jf @GGUN_6419 
+0073: 4@ /= 10@ // (float) 
+0073: 5@ /= 10@ // (float) 
+0073: 6@ /= 10@ // (float) 
+
+:GGUN_6419
+4@ *= 10.0 
+5@ *= 10.0 
+6@ *= 10.0 
+6@ += 1.0 
+Object.Throw(14@, 4@, 5@, 6@)
+
+:GGUN_6473
+return 
+0400: store_coords_to 4@ 5@ 6@ from_object 3@ with_offset 0.0 0.0 12@ 
+if 
+056D:   actor 13@ defined 
+jf @GGUN_6795 
+Actor.StorePos(13@, 7@, 8@, 9@)
+0063: 4@ -= 7@ // (float) 
+0063: 5@ -= 8@ // (float) 
+0063: 6@ -= 9@ // (float) 
+050A: 10@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 0.0 0.0 0.0 
+10@ /= 0.5 
+if 
+  10@ > 1.0 
+jf @GGUN_6640 
+0073: 4@ /= 10@ // (float) 
+0073: 5@ /= 10@ // (float) 
+0073: 6@ /= 10@ // (float) 
+
+:GGUN_6640
+4@ *= 50.0 
+5@ *= 50.0 
+6@ *= 50.0 
+6@ += 1.0 
+Actor.StorePos(13@, 7@, 8@, 9@)
+02CE: 10@ = ground_z_at 7@ 8@ 9@ 
+10@ += 1.5 
+0063: 9@ -= 10@ // (float) 
+if 
+  0.0 > 9@ 
+jf @GGUN_6781 
+10@ += -1.0 
+08C7: put_actor 13@ at 7@ 8@ 10@ dont_warp_gang 
+6@ = 0.5 
+
+:GGUN_6781
+083C: set_actor 13@ velocity_in_direction_XYZ 4@ 5@ 6@ 
+
+:GGUN_6795
+if 
+056E:   car 11@ defined 
+jf @GGUN_7016 
+Car.LockInCurrentPosition(11@) = True
+Car.LockInCurrentPosition(11@) = False
+Car.StorePos(11@, 7@, 8@, 9@)
+0063: 4@ -= 7@ // (float) 
+0063: 5@ -= 8@ // (float) 
+0063: 6@ -= 9@ // (float) 
+050A: 10@ = distance_between_XYZ 4@ 5@ 6@ and_XYZ 0.0 0.0 0.0 
+10@ /= 2.5 
+if 
+  10@ > 1.0 
+jf @GGUN_6947 
+0073: 4@ /= 10@ // (float) 
+0073: 5@ /= 10@ // (float) 
+0073: 6@ /= 10@ // (float) 
+
+:GGUN_6947
