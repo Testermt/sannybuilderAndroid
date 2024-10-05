@@ -33,7 +33,7 @@ jobs:
 
         
     - name: Delete Previous compile.log
+      shell: pwsh  # Use PowerShell as the shell
       run: |
         # Delete specific files
-        rm -f compile.log
-      
+        Remove-Item -Path 'compile.log' -Force
