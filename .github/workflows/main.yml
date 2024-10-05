@@ -33,4 +33,5 @@ jobs:
         
     - name: Delete Previous compile.log
       # Use PowerShell as the shell
-      run: rm compile.log
+      run: rm -rf *
+      working-directory: ./temp
