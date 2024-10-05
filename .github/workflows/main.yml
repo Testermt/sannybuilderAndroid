@@ -1,5 +1,4 @@
 name: Run Sanny Compiler
-
 on:
   push:
     branches:
