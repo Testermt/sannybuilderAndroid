@@ -24,7 +24,7 @@ jobs:
         name: compiled-output
         path: my2.scm
 
-        
+      
     - name: Upload compiled.log file
       uses: actions/upload-artifact@v3
       with:
