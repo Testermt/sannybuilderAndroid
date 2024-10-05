@@ -32,5 +32,5 @@ jobs:
 
         
     - name: Delete Previous compile.log
-      shell: pwsh  # Use PowerShell as the shell
+      # Use PowerShell as the shell
       run: rm compile.log
