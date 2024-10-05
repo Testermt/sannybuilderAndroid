@@ -30,3 +30,10 @@ jobs:
       with:
         name: compiled-output
         path: compile.log
+
+        
+    - name: Delete Previous compile.log
+      run: |
+        # Delete specific files
+        rm -f compile.log
+      
