@@ -21,14 +21,21 @@ jobs:
         run: |
           # Read each line of the arg file into an array
           $argsArray = Get-Content -Path "$env:GITHUB_WORKSPACE\arg"
-          # Store the array of arguments in an environment variable
+          # Store the array in an environment variable as a single string
           echo "ARG_CONTENT=$( ($argsArray -join ' ') )" >> $GITHUB_ENV
 
       - name: Set up environment and compile
         shell: pwsh  # Specify that we want to use PowerShell
         run: |
-          # Run sanny.exe with each line of ARG_CONTENT as separate arguments
-          & "$env:GITHUB_WORKSPACE\sanny.exe" @($env:ARG_CONTENT -split ' ')
+          # Prepare the arguments for sanny.exe
+          $arguments = @()
+          foreach ($arg in $env:ARG_CONTENT -split ' ') {
+              # Replace $env:GITHUB_WORKSPACE with its value
+              $arg = $arg -replace '\$env:GITHUB_WORKSPACE', $env:GITHUB_WORKSPACE
+              $arguments += $arg
+          }
+          # Run sanny.exe with the arguments
+          & "$env:GITHUB_WORKSPACE\sanny.exe" @arguments  # Pass as separate arguments
 
       - name: Upload compiled file
         uses: actions/upload-artifact@v3
