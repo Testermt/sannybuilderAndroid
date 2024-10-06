@@ -1,1 +1,1 @@
-
+-c "$env:GITHUB_WORKSPACE\my.txt"
