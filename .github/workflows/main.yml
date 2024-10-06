@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - main
+      
+    paths-ignore:
+      - '.arg'  # This will ignore changes to the specific .arg file in the root of the repository
+      - '**/*.arg'  # This will ignore any changes to .arg files in any directory (if you want to keep this too)
 
 jobs:
   compile:
