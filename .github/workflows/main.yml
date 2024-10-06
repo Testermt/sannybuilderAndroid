@@ -20,9 +20,12 @@ jobs:
       
     - name: Read arg file content
       id: read_arg_file
+      shell: pwsh  # Specify that we want to use PowerShell
       run: |
           $var = Get-Content "$env:GITHUB_WORKSPACE\arg"
-          echo "ARG_CONTENT=$var" >> $GITHUB_ENV
+          echo "ARG_CONTENT=$($var -join '`n')" >> $GITHUB_ENV  # Join multi-line content with newline
+
+
        
 
     - name: Set up environment and compile
