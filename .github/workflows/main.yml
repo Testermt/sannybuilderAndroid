@@ -10,18 +10,23 @@ on:
 jobs:
   compile:
     runs-on: windows-latest
-
+ 
     env:
       FILENAME: ${{ secrets.FILE_NAME }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+    - name: Read text from file
+      id: read-file-step
+      run: |
+         FILE_CONTENT=$(cat "$GITHUB_WORKSPACE/arg")
+
 
     - name: Set up environment and compile
       run: |
         # Run sanny.exe from the root of the repository to compile my.txt
-        & "$env:GITHUB_WORKSPACE\sanny.exe" --compile ${{ env.FILENAME }}
+        & "$env:GITHUB_WORKSPACE\sanny.exe" FILE_CONTENT
 
     - name: Upload compiled file
       uses: actions/upload-artifact@v3
