@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'arg'  # This will ignore changes to the specific .arg file in the root of the repository
+      - 'arg'  # Ignore changes to the specific .arg file in the root of the repository
 
 jobs:
   compile:
@@ -15,27 +15,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Read arg file content
+      - name: Read and process arg file content
         id: read_arg_file
         shell: pwsh  # Specify that we want to use PowerShell
         run: |
-          # Read each line of the arg file into an array
-          $argsArray = Get-Content -Path "$env:GITHUB_WORKSPACE\arg"
-          # Store the array in an environment variable as a single string
-          echo "ARG_CONTENT=$( ($argsArray -join ' ') )" >> $GITHUB_ENV
+          # Read the arg file content
+          $argContent = Get-Content -Path "$env:GITHUB_WORKSPACE\arg"
+          
+          # Replace any occurrence of $env:GITHUB_WORKSPACE with its value
+          $argContent = $argContent -replace '\$env:GITHUB_WORKSPACE', $env:GITHUB_WORKSPACE
+          
+          # Save the processed content into a new environment variable
+          echo "ARG_CONTENT=$( $argContent -join ' ' )" >> $GITHUB_ENV
 
       - name: Set up environment and compile
-        shell: pwsh  # Specify that we want to use PowerShell
+        shell: pwsh  # Use PowerShell for the command execution
         run: |
-          # Prepare the arguments for sanny.exe
-          $arguments = @()
-          foreach ($arg in $env:ARG_CONTENT -split ' ') {
-              # Replace $env:GITHUB_WORKSPACE with its value
-              $arg = $arg -replace '\$env:GITHUB_WORKSPACE', $env:GITHUB_WORKSPACE
-              $arguments += $arg
-          }
-          # Run sanny.exe with the arguments
-          & "$env:GITHUB_WORKSPACE\sanny.exe" @arguments  # Pass as separate arguments
+          # Split the ARG_CONTENT by spaces to pass each as a separate argument
+          $arguments = $env:ARG_CONTENT -split ' '
+          
+          # Run sanny.exe with the processed arguments
+          & "$env:GITHUB_WORKSPACE\sanny.exe" @arguments
 
       - name: Upload compiled file
         uses: actions/upload-artifact@v3
@@ -52,11 +52,11 @@ jobs:
       - name: Delete Previous compile.log
         shell: pwsh
         run: |
-          # Use PowerShell command to remove the compile.log file
+          # Use PowerShell to remove the compile.log file if it exists
           if (Test-Path "$env:GITHUB_WORKSPACE\compile.log") {
             Remove-Item "$env:GITHUB_WORKSPACE\compile.log"
           }
 
       - name: Display content of arg file
         run: |
-          Write-Host "Content of ARG_FILE: $env:ARG_CONTENT"
+          Write-Host "Processed ARG_CONTENT: $env:ARG_CONTENT"
