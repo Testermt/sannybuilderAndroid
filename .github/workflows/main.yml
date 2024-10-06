@@ -21,10 +21,8 @@ jobs:
         run: |
           # Read each line of the arg file into an array
           $argsArray = Get-Content -Path "$env:GITHUB_WORKSPACE\arg"
-          # Convert the array to a space-separated string
-          $escapedArgs = $argsArray -join ' '
-          # Store the space-separated arguments in an environment variable
-          echo "ARG_CONTENT=$escapedArgs" >> $GITHUB_ENV
+          # Store the array of arguments in an environment variable
+          echo "ARG_CONTENT=$( ($argsArray -join ' ') )" >> $GITHUB_ENV
 
       - name: Set up environment and compile
         shell: pwsh  # Specify that we want to use PowerShell
