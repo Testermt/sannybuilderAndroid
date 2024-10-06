@@ -20,7 +20,7 @@ jobs:
     - name: Read text from file
       id: read-file-step
       run: |
-         FILE_CONTENT=$(cat "$GITHUB_WORKSPACE/arg")
+         FILE_CONTENT=$(cat "$env:GITHUB_WORKSPACE/arg")
 
 
     - name: Set up environment and compile
