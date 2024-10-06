@@ -54,3 +54,6 @@ jobs:
         if (Test-Path "compile.log") {
           Remove-Item "compile.log"
         }
+    - name: Debug
+      run: |
+        echo "Running sanny.exe with arguments: $env:file_content"
