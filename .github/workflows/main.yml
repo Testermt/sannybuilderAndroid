@@ -24,13 +24,10 @@ jobs:
       
         $Args = Get-Content "$env:GITHUB_WORKSPACE\arg"
        
-    - name: Debug Args
-      run: |
-        echo "Running sanny.exe with arguments: $env:Args"
 
     - name: Set up environment and compile
       run: |
-        & "$env:GITHUB_WORKSPACE\sanny.exe" $Args  # Use the Args variable
+        & "$env:GITHUB_WORKSPACE\sanny.exe" "$env:GITHUB_WORKSPACE\arg"  # Use the Args variable
         
     - name: Upload compiled file
       uses: actions/upload-artifact@v3
