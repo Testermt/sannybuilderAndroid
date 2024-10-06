@@ -33,7 +33,7 @@ jobs:
     - name: Set up environment and compile
       run: |
         # Run sanny.exe with the content from the arg file
-        & "$env:GITHUB_WORKSPACE\sanny.exe" "$env:GITHUB_WORKSPACE\arg"
+        & "$env:GITHUB_WORKSPACE\sanny.exe" Get-Content "$env:GITHUB_WORKSPACE\arg"
   
     - name: Upload compiled file
       uses: actions/upload-artifact@v3
