@@ -12,22 +12,22 @@ jobs:
     runs-on: windows-latest
  
     env:
-      FILENAME: ${{ secrets.FILE_NAME }}
+      FILENAME: ${{ $env:GITHUB_WORKSPACE\arg }}
  
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
       
-    - name: Read argument file
-      id: read_arg
-      run:  
-      
-        $Args = Get-Content "$env:GITHUB_WORKSPACE\arg"
+    - name: Read arg file content
+      id: read_arg_file
+      run: |
+          $var = Get-Content "$env:GITHUB_WORKSPACE\arg"
+          echo "ARG_CONTENT=$var" >> $GITHUB_ENV
        
 
     - name: Set up environment and compile
       run: |
-        & "$env:GITHUB_WORKSPACE\sanny.exe" "$env:GITHUB_WORKSPACE\arg"  # Use the Args variable
+        & "$env:GITHUB_WORKSPACE\sanny.exe" "$env:ARG_CONTENT"
         
     - name: Upload compiled file
       uses: actions/upload-artifact@v3
