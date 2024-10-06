@@ -52,4 +52,4 @@ jobs:
           Remove-Item "compile.log"
         }
     - name: Display content of arg file
-      run: Get-Content $Args
+      run: $Args
