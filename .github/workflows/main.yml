@@ -20,13 +20,14 @@ jobs:
     - name: Read text from file
       id: read-file-step
       run: |
-         $FILE_CONTENT = Get-Content "$env:GITHUB_WORKSPACE\arg"
+         $FILE_CONTENT = Get-Content "$env:GITHUB_WORKSPACE\arg" -Raw
+         echo "::set-output name=file_content::$FILE_CONTENT"
 
 
     - name: Set up environment and compile
       run: |
         # Run sanny.exe from the root of the repository to compile my.txt
-        & "$env:GITHUB_WORKSPACE\sanny.exe" FILE_CONTENT
+         & "$env:GITHUB_WORKSPACE\sanny.exe" ${{ steps.read_arg.outputs.file_content }}
 
     - name: Upload compiled file
       uses: actions/upload-artifact@v3
