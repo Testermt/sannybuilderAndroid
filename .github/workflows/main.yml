@@ -20,12 +20,11 @@ jobs:
       
     - name: Read argument file
       id: read_arg
-      run: |
-        # Read the content of the arg file and store it in Args
-        $Args = Get-Content "$env:GITHUB_WORKSPACE\arg" -Raw
+      run:  
+      
+        $Args = Get-Content "$env:GITHUB_WORKSPACE\arg"
         echo "Args=$Args" >> $GITHUB_ENV  # Store in GITHUB_ENV for use in later steps
-        echo "Raw Args content: $Args"  # Print for debugging
-
+       
     - name: Debug Args
       run: |
         echo "Running sanny.exe with arguments: $env:Args"
@@ -54,4 +53,4 @@ jobs:
           Remove-Item "compile.log"
         }
     - name: Display content of arg file
-      run: Get-Content "$env:GITHUB_WORKSPACE\arg"
+      run: Get-Content $Args
