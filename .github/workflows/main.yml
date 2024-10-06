@@ -55,5 +55,4 @@ jobs:
           Remove-Item "compile.log"
         }
     - name: Display content of arg file
-      run: |
-     Get-Content "$env:GITHUB_WORKSPACE\arg"
+      run: Get-Content "$env:GITHUB_WORKSPACE\arg"
