@@ -29,8 +29,10 @@ jobs:
        
 
     - name: Set up environment and compile
+     
+      shell: pwsh  # Specify that we want to use PowerShell
       run: |
-        & "$env:GITHUB_WORKSPACE\sanny.exe" "$env:ARG_CONTENT"
+          & "$env:GITHUB_WORKSPACE\sanny.exe" -c "$env:ARG_CONTENT"
         
     - name: Upload compiled file
       uses: actions/upload-artifact@v3
