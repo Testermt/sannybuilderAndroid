@@ -8,8 +8,8 @@ jobs:
   compile:
     runs-on: windows-latest
 
-env:
-  FILENAME: ${{ secrets.FILE_NAME }}
+    env:
+      FILENAME: ${{ secrets.FILE_NAME }}
 
     steps:
     - name: Checkout repository
@@ -26,14 +26,16 @@ env:
         name: compiled-output
         path: my.scm
 
-      
     - name: Upload compiled.log file
       uses: actions/upload-artifact@v3
       with:
         name: compiled-output
         path: compile.log
 
-        
     - name: Delete Previous compile.log
-      # Use PowerShell as the shell
-      run: rm compile.log
+      shell: pwsh
+      run: |
+        # Use PowerShell command to remove the compile.log file
+        if (Test-Path "compile.log") {
+          Remove-Item "compile.log"
+        }
