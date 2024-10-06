@@ -8,6 +8,9 @@ jobs:
   compile:
     runs-on: windows-latest
 
+env:
+  FILENAME: ${{ secrets.FILE_NAME }}
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -15,13 +18,13 @@ jobs:
     - name: Set up environment and compile
       run: |
         # Run sanny.exe from the root of the repository to compile my.txt
-        & "$env:GITHUB_WORKSPACE\sanny.exe" --compile "$env:GITHUB_WORKSPACE\my.txt" "$env:GITHUB_WORKSPACE\my2.scm"
+        & "$env:GITHUB_WORKSPACE\sanny.exe" --compile ${{ env.FILENAME }}
 
     - name: Upload compiled file
       uses: actions/upload-artifact@v3
       with:
         name: compiled-output
-        path: my2.scm
+        path: my.scm
 
       
     - name: Upload compiled.log file
