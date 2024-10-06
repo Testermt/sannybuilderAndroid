@@ -17,17 +17,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    - name: Read text from file
-      id: read-file-step
+    - name: Read file content
+      id: read_arg
       run: |
-         $FILE_CONTENT = Get-Content "$env:GITHUB_WORKSPACE\arg" -Raw
-         echo "::set-output name=file_content::$FILE_CONTENT"
-
+        $FILE_CONTENT = Get-Content "$env:GITHUB_WORKSPACE\arg" -Raw
+        echo "file_content=$FILE_CONTENT" >> $GITHUB_ENV  # Set as environment variable
 
     - name: Set up environment and compile
       run: |
-        # Run sanny.exe from the root of the repository to compile my.txt
-         & "$env:GITHUB_WORKSPACE\sanny.exe" ${{ steps.read_arg.outputs.file_content }}
+        # Run sanny.exe with the file content
+        & "$env:GITHUB_WORKSPACE\sanny.exe" $env:file_content  # Use the environment variable
+
 
     - name: Upload compiled file
       uses: actions/upload-artifact@v3
