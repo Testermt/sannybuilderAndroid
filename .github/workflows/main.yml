@@ -1,62 +1,40 @@
 name: Run Sanny Compiler
-
 on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'arg'  # Ignore changes to the specific .arg file in the root of the repository
 
 jobs:
   compile:
     runs-on: windows-latest
 
+    env:
+      Args: ${{ secrets.Arguments}}
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Read and process arg file content
-        id: read_arg_file
-        shell: pwsh  # Specify that we want to use PowerShell
-        run: |
-          # Read the arg file content
-          $argContent = Get-Content -Path "$env:GITHUB_WORKSPACE\arg"
-          
-          # Replace any occurrence of $env:GITHUB_WORKSPACE with its value
-          $argContent = $argContent -replace '\$env:GITHUB_WORKSPACE', $env:GITHUB_WORKSPACE
-          
-          # Save the processed content into a new environment variable
-          echo "ARG_CONTENT=$( $argContent -join ' ' )" >> $GITHUB_ENV
+    - name: Set up environment and compile
+      run: |
+        # Run sanny.exe from the root of the repository to compile my.txt
+        & "$env:GITHUB_WORKSPACE\sanny.exe" ${{ env.Args }}
+    - name: Upload compiled file
+      uses: actions/upload-artifact@v3
+      with:
+        name: compiled-output
+        path: my.scm
 
-      - name: Set up environment and compile
-        shell: pwsh  # Use PowerShell for the command execution
-        run: |
-          # Split the ARG_CONTENT by spaces to pass each as a separate argument
-          $arguments = $env:ARG_CONTENT -split ' '
-          
-          # Run sanny.exe with the processed arguments
-          & "$env:GITHUB_WORKSPACE\sanny.exe" @arguments
+    - name: Upload compiled.log file
+      uses: actions/upload-artifact@v3
+      with:
+        name: compiled-output
+        path: compile.log
 
-      - name: Upload compiled file
-        uses: actions/upload-artifact@v3
-        with:
-          name: compiled-output
-          path: my.scm
-
-      - name: Upload compiled.log file
-        uses: actions/upload-artifact@v3
-        with:
-          name: compiled-log
-          path: compile.log
-
-      - name: Delete Previous compile.log
-        shell: pwsh
-        run: |
-          # Use PowerShell to remove the compile.log file if it exists
-          if (Test-Path "$env:GITHUB_WORKSPACE\compile.log") {
-            Remove-Item "$env:GITHUB_WORKSPACE\compile.log"
-          }
-
-      - name: Display content of arg file
-        run: |
-          Write-Host "Processed ARG_CONTENT: $env:ARG_CONTENT"
+    - name: Delete Previous compile.log
+      shell: pwsh
+      run: |
+        # Use PowerShell command to remove the compile.log file
+        if (Test-Path "compile.log") {
+          Remove-Item "compile.log"
+        }
