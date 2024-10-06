@@ -17,13 +17,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      
     - name: Read argument file
       id: read_arg
       run: |
         # Read the content of the arg file
         $FILE_CONTENT = Get-Content "$env:GITHUB_WORKSPACE\arg" -Raw
-        # Escape special characters for safe use in PowerShell
-        $escapedContent = $FILE_CONTENT -replace '\r?\n', '`n' 
+        
+        # Ensure that we properly escape any special characters for PowerShell
+        $escapedContent = $FILE_CONTENT -replace '\r?\n', '`n'
+        
+        # Set the content as an environment variable
         echo "file_content=$escapedContent" >> $GITHUB_ENV
 
     - name: Set up environment and compile
