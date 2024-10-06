@@ -54,6 +54,6 @@ jobs:
         if (Test-Path "compile.log") {
           Remove-Item "compile.log"
         }
-    - name: Debug
+    - name: Display content of arg file
       run: |
-        echo "Running sanny.exe with arguments: $env:file_content"
+     Get-Content "$env:GITHUB_WORKSPACE\arg"
