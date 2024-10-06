@@ -17,18 +17,20 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    - name: Read file content
+    - name: Read argument file
       id: read_arg
       run: |
+        # Read the content of the arg file
         $FILE_CONTENT = Get-Content "$env:GITHUB_WORKSPACE\arg" -Raw
-        echo "file_content=$FILE_CONTENT" >> $GITHUB_ENV  # Set as environment variable
+        # Escape special characters for safe use in PowerShell
+        $escapedContent = $FILE_CONTENT -replace '\r?\n', '`n' 
+        echo "file_content=$escapedContent" >> $GITHUB_ENV
 
     - name: Set up environment and compile
       run: |
-        # Run sanny.exe with the file content
-        & "$env:GITHUB_WORKSPACE\sanny.exe" $env:file_content  # Use the environment variable
-
-
+        # Run sanny.exe with the content from the arg file
+        & "$env:GITHUB_WORKSPACE\sanny.exe" $env:file_content
+  
     - name: Upload compiled file
       uses: actions/upload-artifact@v3
       with:
