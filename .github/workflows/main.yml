@@ -34,7 +34,7 @@ jobs:
     - name: Set up environment and compile
       run: |
         # Run sanny.exe from the root of the repository to compile my.txt
-        & "$env:GITHUB_WORKSPACE\sanny.exe" ${{ env.Args }}
+        & "$env:GITHUB_WORKSPACE\sanny.exe" -c s.txt
         
     - name: Upload compiled file
       uses: actions/upload-artifact@v4
