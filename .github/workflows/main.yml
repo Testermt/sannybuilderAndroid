@@ -18,23 +18,22 @@ jobs:
   compile:
     runs-on: windows-latest
 
-    env:
-      Args: ${{ secrets.Arguments}}
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
       
     - name: Download script file
-      if: github.event_name == 'workflow_dispatch'
       run: |
         # Download the script file from the provided URL
-        Invoke-WebRequest -Uri ${{ github.event.inputs.script_url }} -OutFile "my.txt"
+        Write-Host "Downloading script from ${{ github.event.inputs.script_url }}"
+        Invoke-WebRequest -Uri "${{ github.event.inputs.script_url }}" -OutFile "my.txt"
+        Get-Content -Path "my.txt" -TotalCount 5
         
     - name: Set up environment and compile
       run: |
         # Run sanny.exe from the root of the repository to compile my.txt
-        & "$env:GITHUB_WORKSPACE\sanny.exe" -c s.txt
+        Write-Host "Compiling script with sanny.exe"
+        & "$env:GITHUB_WORKSPACE\sanny.exe" -c my.txt
         
     - name: Upload compiled file
       uses: actions/upload-artifact@v4
@@ -43,6 +42,7 @@ jobs:
         path: s.scm
         if-no-files-found: warn
         retention-days: 7
+        
     - name: Upload compiled.log file
       uses: actions/upload-artifact@v4
       with:
@@ -50,6 +50,7 @@ jobs:
         path: compile.log
         if-no-files-found: warn
         retention-days: 7
+        
     - name: Delete Previous compile.log
       shell: pwsh
       run: |
@@ -59,8 +60,7 @@ jobs:
         }
         
     - name: Notify Discord (if triggered from Discord)
-      if: github.event_name == 'workflow_dispatch' && github.event.inputs.user_id != ''
+      if: github.event.inputs.user_id != ''
       run: |
         # Here you would add code to notify the Discord user that the compilation is complete
-        # This is a placeholder - you'll need to implement the actual Discord notification
         Write-Host "Compilation complete for Discord user ID: ${{ github.event.inputs.user_id }}"
