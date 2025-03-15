@@ -61,6 +61,44 @@ jobs:
         
     - name: Notify Discord (if triggered from Discord)
       if: github.event.inputs.user_id != ''
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        USER_ID: ${{ github.event.inputs.user_id }}
       run: |
-        # Here you would add code to notify the Discord user that the compilation is complete
+        # Check if compilation was successful
+        $compilationSuccess = Test-Path "s.scm"
+        
+        # Get artifact URL
+        $artifactUrl = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+        
+        if ($compilationSuccess) {
+          $message = @{
+            content = "<@$env:USER_ID> Your script has been compiled successfully! Download the compiled file here: $artifactUrl"
+          } | ConvertTo-Json
+        } else {
+          # Read the error log
+          $errorLog = ""
+          if (Test-Path "compile.log") {
+            $errorLog = Get-Content -Path "compile.log" -Raw
+            if ($errorLog.Length -gt 1500) {
+              $errorLog = $errorLog.Substring(0, 1500) + "... (truncated)"
+            }
+          }
+          
+          $message = @{
+            content = "<@$env:USER_ID> There was an error compiling your script. Check the logs for details: $artifactUrl"
+            embeds = @(
+              @{
+                title = "Compilation Error"
+                description = "```$errorLog```"
+                color = 16711680  # Red color
+              }
+            )
+          } | ConvertTo-Json -Depth 4
+        }
+        
+        # Send message to Discord
+        Invoke-RestMethod -Uri $env:DISCORD_WEBHOOK -Method Post -Body $message -ContentType "application/json"
+        
+        # Log completion
         Write-Host "Compilation complete for Discord user ID: ${{ github.event.inputs.user_id }}"
