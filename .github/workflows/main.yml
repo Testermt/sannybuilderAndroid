@@ -37,17 +37,19 @@ jobs:
         & "$env:GITHUB_WORKSPACE\sanny.exe" ${{ env.Args }}
         
     - name: Upload compiled file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: compiled-output
         path: my.scm
-
+        if-no-files-found: warn
+        retention-days: 7
     - name: Upload compiled.log file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: compiled-output
+        name: compilation-logs
         path: compile.log
-
+        if-no-files-found: warn
+        retention-days: 7
     - name: Delete Previous compile.log
       shell: pwsh
       run: |
