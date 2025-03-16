@@ -39,7 +39,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: compiled-output
-        path: s.scm
+        path: my.scm
         if-no-files-found: warn
         retention-days: 7
         
