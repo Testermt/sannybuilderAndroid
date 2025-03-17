@@ -39,6 +39,23 @@ jobs:
         Write-Host "Compiling script with sanny.exe"
         & "$env:GITHUB_WORKSPACE\sanny.exe" -c my.txt
         
+    - name: Create artifact archive
+      if: success()
+      run: |
+        # Create a directory for the artifacts
+        New-Item -Path "compilation_output" -ItemType Directory -Force
+        
+        # Copy the compiled file and log to the directory
+        if (Test-Path "my.scm") {
+          Copy-Item -Path "my.scm" -Destination "compilation_output/"
+        }
+        if (Test-Path "compile.log") {
+          Copy-Item -Path "compile.log" -Destination "compilation_output/"
+        }
+        
+        # Create a zip archive
+        Compress-Archive -Path "compilation_output/*" -DestinationPath "compilation_output.zip" -Force
+        
     - name: Upload compiled file
       uses: actions/upload-artifact@v4
       with:
@@ -65,32 +82,34 @@ jobs:
     - name: Send compiled file to Discord
       if: github.event.inputs.user_id != '' && success()
       run: |
-        # Check if the compiled file exists
-        if (Test-Path "my.scm") {
+        # Check if the archive file exists
+        if (Test-Path "compilation_output.zip") {
           # Send the file to Discord webhook
-          $fileContent = [System.IO.File]::ReadAllBytes("my.scm")
-          $fileContentBase64 = [System.Convert]::ToBase64String($fileContent)
+          $FormData = @{
+            content = "<@${{ github.event.inputs.user_id }}> Here's your compiled script archive! 🎉"
+            username = "Sanny Compiler Bot"
+          }
           
-          $boundary = [System.Guid]::NewGuid().ToString()
-          $LF = "`r`n"
+          $FilePath = "compilation_output.zip"
+          $FileName = "compilation_output.zip"
           
-          $bodyLines = @(
-            "--$boundary",
-            "Content-Disposition: form-data; name=`"content`"",
-            "",
-            "<@${{ github.event.inputs.user_id }}> Here's your compiled script! 🎉",
-            "--$boundary",
-            "Content-Disposition: form-data; name=`"file`"; filename=`"my.scm`"",
-            "Content-Type: application/octet-stream",
-            "",
-            $fileContentBase64,
-            "--$boundary--"
-          )
+          $FileContent = [System.IO.File]::ReadAllBytes($FilePath)
+          $FileStream = [System.IO.MemoryStream]::new($FileContent)
           
-          $body = $bodyLines -join $LF
+          $FileHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("form-data")
+          $FileHeader.Name = "file"
+          $FileHeader.FileName = $FileName
+          
+          $MultipartContent = [System.Net.Http.MultipartFormDataContent]::new()
+          
+          $StringContent = [System.Net.Http.StringContent]::new($FormData.content)
+          $MultipartContent.Add($StringContent, "content")
+          
+          $FileContent = [System.Net.Http.StreamContent]::new($FileStream)
+          $MultipartContent.Add($FileContent, "file", $FileName)
           
           try {
-            $response = Invoke-RestMethod -Uri "${{ secrets.DISCORD_WEBHOOK }}" -Method Post -ContentType "multipart/form-data; boundary=$boundary" -Body $body
+            $Response = Invoke-RestMethod -Uri "${{ secrets.DISCORD_WEBHOOK }}" -Method Post -Body $MultipartContent
             Write-Host "Successfully sent file to Discord!"
           }
           catch {
@@ -98,9 +117,12 @@ jobs:
             # If direct file upload fails, use the Discord notification action as fallback
             echo "SEND_FALLBACK=true" >> $env:GITHUB_ENV
           }
+          finally {
+            $FileStream.Dispose()
+          }
         }
         else {
-          Write-Host "Compiled file not found!"
+          Write-Host "Compiled archive file not found!"
           echo "SEND_FALLBACK=true" >> $env:GITHUB_ENV
         }
         
@@ -141,6 +163,18 @@ jobs:
           Timestamp: ${{ env.TIMESTAMP }}
         draft: false
         prerelease: false
+        
+    # Upload the archive to the release
+    - name: Upload Release Asset
+      if: github.event.inputs.user_id != '' && success()
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./compilation_output.zip
+        asset_name: compilation_output.zip
+        asset_content_type: application/zip
         
     # Fallback Discord notification if direct file upload fails
     - name: Send Discord notification (fallback)
