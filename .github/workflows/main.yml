@@ -143,6 +143,18 @@ jobs:
         asset_name: compilation_output.zip
         asset_content_type: application/zip
         
+    # Clean up temporary files
+    - name: Clean up temporary files
+      if: always()
+      run: |
+        Write-Host "Cleaning up temporary files..."
+        if (Test-Path "my.txt") { Remove-Item -Path "my.txt" -Force }
+        if (Test-Path "my.scm") { Remove-Item -Path "my.scm" -Force }
+        if (Test-Path "compile.log") { Remove-Item -Path "compile.log" -Force }
+        if (Test-Path "compilation_output") { Remove-Item -Path "compilation_output" -Recurse -Force }
+        if (Test-Path "compilation_output.zip") { Remove-Item -Path "compilation_output.zip" -Force }
+        Write-Host "Temporary files cleaned up"
+        
     # Internal logging only - no user notification
     - name: Log completion
       run: echo "Compilation complete for Discord user ID ${{ github.event.inputs.user_id }} - Results will be sent via DM"
