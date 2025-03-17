@@ -61,6 +61,49 @@ jobs:
         echo "ARTIFACT_URL=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $env:GITHUB_ENV
         echo "TIMESTAMP=$(Get-Date -Format 'o')" >> $env:GITHUB_ENV
         
+    # Send the compiled file directly to Discord
+    - name: Send compiled file to Discord
+      if: github.event.inputs.user_id != '' && success()
+      run: |
+        # Check if the compiled file exists
+        if (Test-Path "my.scm") {
+          # Send the file to Discord webhook
+          $fileContent = [System.IO.File]::ReadAllBytes("my.scm")
+          $fileContentBase64 = [System.Convert]::ToBase64String($fileContent)
+          
+          $boundary = [System.Guid]::NewGuid().ToString()
+          $LF = "`r`n"
+          
+          $bodyLines = @(
+            "--$boundary",
+            "Content-Disposition: form-data; name=`"content`"",
+            "",
+            "<@${{ github.event.inputs.user_id }}> Here's your compiled script! 🎉",
+            "--$boundary",
+            "Content-Disposition: form-data; name=`"file`"; filename=`"my.scm`"",
+            "Content-Type: application/octet-stream",
+            "",
+            $fileContentBase64,
+            "--$boundary--"
+          )
+          
+          $body = $bodyLines -join $LF
+          
+          try {
+            $response = Invoke-RestMethod -Uri "${{ secrets.DISCORD_WEBHOOK }}" -Method Post -ContentType "multipart/form-data; boundary=$boundary" -Body $body
+            Write-Host "Successfully sent file to Discord!"
+          }
+          catch {
+            Write-Host "Failed to send file to Discord: $_"
+            # If direct file upload fails, use the Discord notification action as fallback
+            echo "SEND_FALLBACK=true" >> $env:GITHUB_ENV
+          }
+        }
+        else {
+          Write-Host "Compiled file not found!"
+          echo "SEND_FALLBACK=true" >> $env:GITHUB_ENV
+        }
+        
     - name: Create compilation result file
       if: github.event.inputs.user_id != ''
       run: |
@@ -99,8 +142,9 @@ jobs:
         draft: false
         prerelease: false
         
-    - name: Send Discord notification
-      if: github.event.inputs.user_id != ''
+    # Fallback Discord notification if direct file upload fails
+    - name: Send Discord notification (fallback)
+      if: github.event.inputs.user_id != '' && env.SEND_FALLBACK == 'true'
       uses: sarisia/actions-status-discord@v1
       with:
         webhook: ${{ secrets.DISCORD_WEBHOOK }}
