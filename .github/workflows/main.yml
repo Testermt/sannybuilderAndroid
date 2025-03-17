@@ -78,48 +78,13 @@ jobs:
         echo "ARTIFACT_URL=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $env:GITHUB_ENV
         echo "TIMESTAMP=$(Get-Date -Format 'o')" >> $env:GITHUB_ENV
         
-    # Send the compiled file directly to Discord
-    - name: Send compiled file to Discord
+    # This step is only for internal logging, not for user notification
+    - name: Log file preparation
       if: github.event.inputs.user_id != '' && success()
       run: |
         # Check if the archive file exists
         if (Test-Path "compilation_output.zip") {
-          # Send the file to Discord webhook
-          $FormData = @{
-            content = "Compiled script archive for user ${{ github.event.inputs.user_id }} is ready! 🎉"
-            username = "Sanny Compiler Bot"
-          }
-          
-          $FilePath = "compilation_output.zip"
-          $FileName = "compilation_output.zip"
-          
-          $FileContent = [System.IO.File]::ReadAllBytes($FilePath)
-          $FileStream = [System.IO.MemoryStream]::new($FileContent)
-          
-          $FileHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("form-data")
-          $FileHeader.Name = "file"
-          $FileHeader.FileName = $FileName
-          
-          $MultipartContent = [System.Net.Http.MultipartFormDataContent]::new()
-          
-          $StringContent = [System.Net.Http.StringContent]::new($FormData.content)
-          $MultipartContent.Add($StringContent, "content")
-          
-          $FileContent = [System.Net.Http.StreamContent]::new($FileStream)
-          $MultipartContent.Add($FileContent, "file", $FileName)
-          
-          try {
-            $Response = Invoke-RestMethod -Uri "${{ secrets.DISCORD_WEBHOOK }}" -Method Post -Body $MultipartContent
-            Write-Host "Successfully sent file to Discord!"
-          }
-          catch {
-            Write-Host "Failed to send file to Discord: $_"
-            # If direct file upload fails, use the Discord notification action as fallback
-            echo "SEND_FALLBACK=true" >> $env:GITHUB_ENV
-          }
-          finally {
-            $FileStream.Dispose()
-          }
+          Write-Host "Compilation output archive prepared for user ${{ github.event.inputs.user_id }}"
         }
         else {
           Write-Host "Compiled archive file not found!"
@@ -178,26 +143,6 @@ jobs:
         asset_name: compilation_output.zip
         asset_content_type: application/zip
         
-    # Fallback Discord notification if direct file upload fails
-    - name: Send Discord notification (fallback)
-      if: github.event.inputs.user_id != '' && env.SEND_FALLBACK == 'true'
-      uses: sarisia/actions-status-discord@v1
-      with:
-        webhook: ${{ secrets.DISCORD_WEBHOOK }}
-        title: "Compilation Result"
-        description: "Your script has been processed"
-        color: 0x00ff00
-        username: Sanny Compiler Bot
-        avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
-        content: "Compilation is complete for user ${{ github.event.inputs.user_id }}. Check the artifacts for results."
-        
-    - name: Delete Previous compile.log
-      shell: pwsh
-      run: |
-        # Use PowerShell command to remove the compile.log file
-        if (Test-Path "compile.log") {
-          Remove-Item "compile.log"
-        }
-        
+    # Internal logging only - no user notification
     - name: Log completion
-      run: echo "Compilation complete for Discord user ID ${{ github.event.inputs.user_id }}"
+      run: echo "Compilation complete for Discord user ID ${{ github.event.inputs.user_id }} - Results will be sent via DM"
