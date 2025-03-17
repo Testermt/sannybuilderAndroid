@@ -55,10 +55,11 @@ jobs:
         if-no-files-found: warn
         retention-days: 7
         
-    - name: Get artifact URL
+    - name: Get artifact URL and set timestamp
       id: get_artifact_url
       run: |
         echo "ARTIFACT_URL=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $env:GITHUB_ENV
+        echo "TIMESTAMP=$(Get-Date -Format 'o')" >> $env:GITHUB_ENV
         
     - name: Create compilation result file
       if: github.event.inputs.user_id != ''
@@ -67,7 +68,7 @@ jobs:
           user_id = "${{ github.event.inputs.user_id }}";
           status = "success";
           artifact_url = "${{ env.ARTIFACT_URL }}";
-          timestamp = (Get-Date).ToString("o")
+          timestamp = "${{ env.TIMESTAMP }}"
         }
         $result | ConvertTo-Json | Set-Content -Path compilation_result.json
         
@@ -78,7 +79,25 @@ jobs:
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git add compilation_result.json
         git commit -m "Add compilation result for user ${{ github.event.inputs.user_id }}"
-        git push
+        git push || echo "Failed to push to repository, using alternative method"
+        
+    # Alternative method: Create a release with the compilation result
+    - name: Create Release with Compilation Result
+      if: github.event.inputs.user_id != ''
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: compilation-${{ github.event.inputs.user_id }}-${{ github.run_id }}
+        release_name: Compilation Result for ${{ github.event.inputs.user_id }}
+        body: |
+          Compilation result for user ${{ github.event.inputs.user_id }}
+          Status: success
+          Artifact URL: ${{ env.ARTIFACT_URL }}
+          Timestamp: ${{ env.TIMESTAMP }}
+        draft: false
+        prerelease: false
         
     - name: Send Discord notification
       if: github.event.inputs.user_id != ''
