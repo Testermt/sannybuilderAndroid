@@ -17,10 +17,14 @@ on:
 jobs:
   compile:
     runs-on: windows-latest
+    permissions:
+      contents: write  # This gives the workflow permission to write to the repository
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}  # Use the built-in token for authentication
       
     - name: Download script file
       run: |
@@ -70,8 +74,8 @@ jobs:
     - name: Commit compilation result
       if: github.event.inputs.user_id != ''
       run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git add compilation_result.json
         git commit -m "Add compilation result for user ${{ github.event.inputs.user_id }}"
         git push
