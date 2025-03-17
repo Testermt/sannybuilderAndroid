@@ -51,13 +51,30 @@ jobs:
         if-no-files-found: warn
         retention-days: 7
         
-    - name: Delete Previous compile.log
-      shell: pwsh
+    - name: Get artifact URL
+      id: get_artifact_url
       run: |
-        # Use PowerShell command to remove the compile.log file
-        if (Test-Path "compile.log") {
-          Remove-Item "compile.log"
+        echo "ARTIFACT_URL=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $env:GITHUB_ENV
+        
+    - name: Create compilation result file
+      if: github.event.inputs.user_id != ''
+      run: |
+        $result = @{
+          user_id = "${{ github.event.inputs.user_id }}";
+          status = "success";
+          artifact_url = "${{ env.ARTIFACT_URL }}";
+          timestamp = (Get-Date).ToString("o")
         }
+        $result | ConvertTo-Json | Set-Content -Path compilation_result.json
+        
+    - name: Commit compilation result
+      if: github.event.inputs.user_id != ''
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add compilation_result.json
+        git commit -m "Add compilation result for user ${{ github.event.inputs.user_id }}"
+        git push
         
     - name: Send Discord notification
       if: github.event.inputs.user_id != ''
@@ -70,6 +87,14 @@ jobs:
         username: Sanny Compiler Bot
         avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
         content: "<@${{ github.event.inputs.user_id }}> Your compilation is complete! Check the artifacts for results."
+        
+    - name: Delete Previous compile.log
+      shell: pwsh
+      run: |
+        # Use PowerShell command to remove the compile.log file
+        if (Test-Path "compile.log") {
+          Remove-Item "compile.log"
+        }
         
     - name: Log completion
       run: echo "Compilation complete for Discord user ID ${{ github.event.inputs.user_id }}"
