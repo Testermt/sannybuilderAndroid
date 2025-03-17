@@ -86,7 +86,7 @@ jobs:
         if (Test-Path "compilation_output.zip") {
           # Send the file to Discord webhook
           $FormData = @{
-            content = "<@${{ github.event.inputs.user_id }}> Here's your compiled script archive! 🎉"
+            content = "Compiled script archive for user ${{ github.event.inputs.user_id }} is ready! 🎉"
             username = "Sanny Compiler Bot"
           }
           
@@ -187,7 +187,7 @@ jobs:
         color: 0x00ff00
         username: Sanny Compiler Bot
         avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
-        content: "<@${{ github.event.inputs.user_id }}> Your compilation is complete! Check the artifacts for results."
+        content: "Compilation is complete for user ${{ github.event.inputs.user_id }}. Check the artifacts for results."
         
     - name: Delete Previous compile.log
       shell: pwsh
