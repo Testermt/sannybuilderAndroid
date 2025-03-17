@@ -133,7 +133,8 @@ jobs:
           user_id = "${{ github.event.inputs.user_id }}";
           status = "success";
           artifact_url = "${{ env.ARTIFACT_URL }}";
-          timestamp = "${{ env.TIMESTAMP }}"
+          timestamp = "${{ env.TIMESTAMP }}";
+          dm_only = "true"
         }
         $result | ConvertTo-Json | Set-Content -Path compilation_result.json
         
@@ -161,6 +162,7 @@ jobs:
           Status: success
           Artifact URL: ${{ env.ARTIFACT_URL }}
           Timestamp: ${{ env.TIMESTAMP }}
+          DM Only: true
         draft: false
         prerelease: false
         
