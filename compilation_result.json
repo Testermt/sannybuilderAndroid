@@ -1,7 +1,7 @@
 {
-  "dm_only": "true",
-  "timestamp": "2025-03-19T17:05:03.7280003+00:00",
-  "artifact_url": "https://github.com/Testermt/sannybuilderAndroid/actions/runs/13952436128",
   "status": "success",
-  "user_id": "123456789"
+  "artifact_url": "https://github.com/Testermt/sannybuilderAndroid/actions/runs/13952474386",
+  "dm_only": "true",
+  "timestamp": "2025-03-19T17:07:01.2625488+00:00",
+  "user_id": "823780843448827944"
 }
